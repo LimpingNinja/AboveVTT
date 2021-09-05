@@ -38,3 +38,10 @@ l.rel = "stylesheet";
 
 (document.head || document.documentElement).appendChild(l);
 
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+	// set all elements owning target to target=_blank
+	if ('target' in node) {
+		node.setAttribute('target', '_blank');
+		node.setAttribute('rel', 'noopener');
+	}
+});
