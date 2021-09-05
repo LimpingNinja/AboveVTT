@@ -504,14 +504,6 @@ class MessageBroker {
 	}
 	
 	convertChat(data,local=false) {
-		DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-		// set all elements owning target to target=_blank
-		   if ('target' in node) {
-		     node.setAttribute('target', '_blank');
-		     node.setAttribute('rel', 'noopener');
-		   }
-		});
-
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});

@@ -6,6 +6,38 @@ function parse_img(url){
 	return retval;
 }
 
+// Checks if an image exists by doing a HEAD request and checking the content-type. Unfortunately this
+// has a lot of limitations based on CORS, but it is better than a pure failure. Fall through should
+// send it as a link.
+function check_if_image(url) {
+	let regex = /^http[^ \!@\$\^&\(\)\+\=]+(\.png|\.jpeg|\.gif|\.jpg)$/;
+	// Assume png, gif, jpg are images by default and also assume google drive links are images,
+	// unfortunately GDrive prevents this test due to CORS so you have to just make an assumption on
+	// what people are using most.
+	if(regex.test(url) || url.startsWith("https://drive.google.com")) {
+		return true;
+	}
+
+	var data;
+	$.ajax({
+		type: "HEAD",
+		async: false,
+		url: url,
+		global: false,
+		error: function(xhr, textStatus, errorThrown){
+			console.log(textStatus + ": " + xhr.status + " " + errorThrown);
+			data = null;
+		},
+		success: function(data, textStatus, xhr) {
+			data = xhr.getResponseHeader('Content-Type');
+		},
+	});
+
+	if (data !== undefined && data !== null) {
+		return data.startsWith("image/");
+	}
+	return false;
+}
 
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
@@ -1059,11 +1091,14 @@ function init_ui() {
 				whisper=matches[1]
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
-			
-			
-			if(validateUrl(text)){
 
-				text="<img width=200 src='"+parse_img(text)+"'>";
+			if(validateUrl(text)){
+				let is_image = check_if_image(text);
+				if(is_image) {
+					text = "<img width=200 src='" + parse_img(text) + "'>";
+				} else {
+					text = "<a href='"+text+"' target='_blank'>"+text+"</a>"
+				}
 			}
 			
 			data = {
