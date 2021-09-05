@@ -1097,7 +1097,7 @@ function init_ui() {
 				if(is_image) {
 					text = "<img width=200 src='" + parse_img(text) + "'>";
 				} else {
-					text = "<a href='"+text+"' target='_blank'>"+text+"</a>"
+					text = "<a href='"+text+"' style='text-decoration: underline' target='_blank'>"+text+"</a>"
 				}
 			}
 			
