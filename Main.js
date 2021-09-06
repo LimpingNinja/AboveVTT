@@ -10,11 +10,12 @@ function parse_img(url){
 // has a lot of limitations based on CORS, but it is better than a pure failure. Fall through should
 // send it as a link.
 function check_if_image(url) {
-	let regex = /^http[^ \!@\$\^&\(\)\+\=]+(\.png|\.jpeg|\.gif|\.jpg)$/;
+//	let regex = /^http[^\!@\$\^&\(\)\+\=]+(\.webp|\.png|\.jpeg|\.gif|\.jpg)$/i;
+	let regex = /^https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg)\??.*$/gmi
 	// Assume png, gif, jpg are images by default and also assume google drive links are images,
 	// unfortunately GDrive prevents this test due to CORS so you have to just make an assumption on
 	// what people are using most.
-	if(regex.test(url) || url.startsWith("https://drive.google.com")) {
+	if(url.match(regex) || url.startsWith("https://drive.google.com")) {
 		return true;
 	}
 
